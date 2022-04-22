@@ -16,3 +16,8 @@ comando Linux/macOS
 comando Windows
 
 	setup
+
+---
+
+*È obbligatorio installare le estensioni VS Code consigliate dello workspace
+(.vscode/extensions.json)*
