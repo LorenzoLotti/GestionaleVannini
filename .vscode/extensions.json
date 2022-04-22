@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "editorconfig.editorconfig",
+      "tobermory.es6-string-html",
+      "celianriboulet.webvalidator"
+  ]
+}
