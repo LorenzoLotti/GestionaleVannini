@@ -3,6 +3,7 @@
 body
 {
   font-family: 'Montserrat', sans-serif;
+  overflow-y: scroll;
 }
 
 @media(max-width:600px)
@@ -25,10 +26,12 @@ body
 }
 
 
-button span::before {
+button span::before
+{
   content: 'Mostra';
 }
 
-button[aria-expanded='true'] span::before {
+button[aria-expanded='true'] span::before
+{
   content: 'Chiudi';
 }
