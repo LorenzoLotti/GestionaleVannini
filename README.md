@@ -11,7 +11,7 @@ Clona la repository e entraci:
 
 comando Linux/macOS
 
-	./setup.bash
+	bash setup.bash
 
 comando Windows
 
