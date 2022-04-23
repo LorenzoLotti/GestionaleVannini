@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link
-      href="https://unpkg.com/tabulator-tables@5.2.1/dist/css/tabulator_bootstrap5.min.css"
+      href="https://unpkg.com/tabulator-tables@5.2.1/dist/css/tabulator_semanticui.min.css"
       rel="stylesheet"
     />
     <link
@@ -15,19 +15,65 @@
     <title>Index</title>
   </head>
   <body>
-    <h1>Lorenzo Vannini - Gestionale</h1>
-    <div id="orders-table"></div>
-    <button id="update" class="btn bg-primary m-2">Aggiorna</button>
-    <button id="load" class="btn bg-success m-2">Scarica</button>
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/tabulator-tables@5.2.1/dist/js/tabulator.min.js"
-    ></script>
-    <script type="module" src="js/main.js"></script>
+    <header class="p-3">
+      <h1 class="display-3 text-center fw-bold">
+        Lorenzo Vannini - Gestionale
+      </h1>
+    </header>
+    <div class="text-center">
+      <button class="btn btn-primary fs-5 fw-bolder w-50" data-bs-toggle="collapse" data-bs-target="#filters">
+        <span>
+          filtri
+        </span>
+      </button>
+    </div>
+    <div id="filters" class="collapse card m-3 p-3 shadow-sm">
+      <div class="input-group m-2 w-auto">
+        <span class="input-group-text">Nome</span>
+        <input class="form-control">
+      </div>
+      <div class="input-group m-2 w-auto">
+        <span class="input-group-text">Indirizzo</span>
+        <input class="form-control">
+      </div>
+      <div class="input-group m-2 w-auto">
+        <span class="input-group-text">Provincia</span>
+        <input class="form-control">
+      </div>
+      <div class="input-group m-2 w-auto">
+        <span class="input-group-text">Importo</span>
+        <input type="number" class="form-control" min="0">
+      </div>
+      <div class="input-group m-2 w-auto">
+        <span class="input-group-text">Quantità</span>
+        <input type="number" class="form-control" min="0">
+      </div>
+      <div class="input-group m-2 w-auto">
+        <span class="input-group-text">Stato</span>
+        <select class="form-control">
+          <option value="volvo">entrambi</option>
+          <option value="saab">non consegnato</option>
+          <option value="mercedes">consegnato</option>
+        </select>
+      </div>
+    </div>
+    <br>
+    <div id="orders-table" class="shadow-sm rounded-0"></div>
+    <button id="update" class="btn btn-primary fw-bolder m-2">
+      Aggiorna
+    </button>
+    <button id="transfer" class="btn btn-success fw-bolder m-2">
+      Trasferisci
+    </button>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/tabulator-tables@5.2.1/dist/js/tabulator.min.js"
+    ></script>
+    <script type="module" src="js/main.js"></script>
   </body>
 </html>

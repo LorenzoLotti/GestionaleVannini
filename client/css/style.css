@@ -1,0 +1,34 @@
+@import 'https://fonts.googleapis.com/css2?family=Montserrat&display=swap';
+
+body
+{
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media(max-width:600px)
+{
+  #orders-table
+  {
+    font-size: .8rem;
+  }
+}
+
+.tabulator-col-resize-handle
+{
+  background: #000;
+  opacity: .05;
+}
+
+#filters .input-group-text
+{
+  width: 10ch;
+}
+
+
+button span::before {
+  content: 'Mostra';
+}
+
+button[aria-expanded='true'] span::before {
+  content: 'Chiudi';
+}
