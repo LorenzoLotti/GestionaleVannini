@@ -124,6 +124,7 @@ const ordersTable = new Tabulator('#orders-table', {
   paginationSize: 10, //allow 100 rows per page of data
   paginationCounter: 'rows', //display count of paginated rows in footer
   movableColumns: true, //allow column order to be changed
+  placeholder: 'Nessun dato',
   initialSort: [
     //set the initial sort order of the data
     { column: 'name', dir: 'asc' },
@@ -163,5 +164,6 @@ for (const filter of filters)
       return
 
     ordersTable.addFilter(field, type, filter.value)
+    ordersTable.redraw()
   }
 }
