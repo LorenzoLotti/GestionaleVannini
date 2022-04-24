@@ -125,18 +125,19 @@ const ordersTable = new Tabulator('#orders-table', {
   paginationCounter: 'rows', //display count of paginated rows in footer
   movableColumns: true, //allow column order to be changed
   placeholder: 'Nessun dato',
+  height: '100%',
   initialSort: [
     //set the initial sort order of the data
     { column: 'name', dir: 'asc' },
   ],
   columns: [
     //define the table columns
-    { title: 'Nome', field: 'name', sorter: 'string' },
-    { title: 'Indirizzo', field: 'address', sorter: 'string' },
-    { title: 'Provincia', field: 'province', sorter: 'string' },
-    { title: 'Importo', field: 'price', sorter: 'number' },
-    { title: 'Quantità', field: 'quantity', sorter: 'number' },
-    { title: 'Stato', field: 'status', sorter: 'string' },
+    { title: 'Nome', field: 'name', sorter: 'string', minWidth: 75 },
+    { title: 'Indirizzo', field: 'address', sorter: 'string', minWidth: 75 },
+    { title: 'Provincia', field: 'province', sorter: 'string', minWidth: 75 },
+    { title: 'Importo', field: 'price', sorter: 'number', minWidth: 75 },
+    { title: 'Quantità', field: 'quantity', sorter: 'number', minWidth: 75 },
+    { title: 'Stato', field: 'status', sorter: 'string', minWidth: 75 },
   ],
 })
 
