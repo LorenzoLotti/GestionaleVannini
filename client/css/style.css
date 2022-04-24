@@ -6,15 +6,12 @@ body
   overflow-y: scroll;
 }
 
-@media(max-width:600px)
+#orders-table
 {
-  #orders-table
-  {
-    font-size: .8rem;
-  }
+  box-shadow: 0 0 1rem #ccc;
 }
 
-.tabulator-col-resize-handle
+#orders-table .tabulator-col-resize-handle
 {
   background: #000;
   opacity: .05;

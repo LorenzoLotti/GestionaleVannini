@@ -130,11 +130,38 @@ const ordersTable = new Tabulator('#orders-table', {
   ],
   columns: [
     //define the table columns
-    { title: 'Nome', field: 'name' },
-    { title: 'Indirizzo', field: 'address' },
-    { title: 'Provincia', field: 'province' },
-    { title: 'Importo', field: 'price' },
-    { title: 'Quantità', field: 'quantity' },
-    { title: 'Stato', field: 'status' },
+    { title: 'Nome', field: 'name', sorter: 'string' },
+    { title: 'Indirizzo', field: 'address', sorter: 'string' },
+    { title: 'Provincia', field: 'province', sorter: 'string' },
+    { title: 'Importo', field: 'price', sorter: 'number' },
+    { title: 'Quantità', field: 'quantity', sorter: 'number' },
+    { title: 'Stato', field: 'status', sorter: 'string' },
   ],
 })
+
+const filters = document.querySelectorAll('#filters [data-filtering]')
+
+document.querySelector('#filters [type="reset"]').onclick = () =>
+{
+  ordersTable.clearFilter()
+}
+
+for (const filter of filters)
+{
+  const field = filter.getAttribute('data-filtering')
+  const type = filter.getAttribute('data-ftype')
+
+  filter.oninput = () =>
+  {
+    const tableFilters = ordersTable.getFilters()
+
+    for (const tableFilter of tableFilters)
+      if (tableFilter.field == field)
+        ordersTable.removeFilter(field, tableFilter.type, tableFilter.value)
+
+    if (filter.value == '' && type == '=')
+      return
+
+    ordersTable.addFilter(field, type, filter.value)
+  }
+}

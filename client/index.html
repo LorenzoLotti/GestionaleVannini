@@ -14,7 +14,7 @@
     <link href="css/style.css" rel="stylesheet" />
     <title>Index</title>
   </head>
-  <body>
+  <body class="bg-light">
     <header class="p-3">
       <h1 class="display-3 text-center fw-bold">
         Lorenzo Vannini - Gestionale
@@ -27,38 +27,45 @@
         </span>
       </button>
     </div>
-    <div id="filters" class="collapse card m-3 p-3 shadow-sm">
+    <form id="filters" class="collapse card container-md mx-3 mx-md-auto my-3 p-3 shadow-sm w-auto">
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Nome</span>
-        <input class="form-control">
+        <input class="form-control" data-filtering="name" data-ftype="like">
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Indirizzo</span>
-        <input class="form-control">
+        <input class="form-control" data-filtering="address" data-ftype="like">
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Provincia</span>
-        <input class="form-control">
+        <input class="form-control" data-filtering="province" data-ftype="like">
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Importo</span>
-        <input type="number" class="form-control" min="0">
+        <input type="number" class="form-control" min="0" data-filtering="price" data-ftype="like">
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Quantità</span>
-        <input type="number" class="form-control" min="0">
+        <input
+          type="number"
+          class="form-control"
+          data-filtering="quantity"
+          data-ftype="like"
+          min="0"
+        >
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Stato</span>
-        <select class="form-control">
-          <option value="volvo">entrambi</option>
-          <option value="saab">non consegnato</option>
-          <option value="mercedes">consegnato</option>
+        <select class="form-control" data-filtering="status" data-ftype="=">
+          <option value="">NESSUN FILTRO</option>
+          <option value="non consegnato">non consegnato</option>
+          <option value="consegnato">consegnato</option>
         </select>
       </div>
-    </div>
+      <button type="reset" class="btn btn-danger m-2">Elimina filtri</button>
+    </form>
     <br>
-    <div id="orders-table" class="shadow-sm rounded-0"></div>
+    <div id="orders-table" class="rounded-0"></div>
     <button id="update" class="btn btn-primary fw-bolder m-2">
       Aggiorna
     </button>
