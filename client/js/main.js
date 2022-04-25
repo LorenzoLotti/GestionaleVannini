@@ -161,10 +161,9 @@ for (const filter of filters)
       if (tableFilter.field == field)
         ordersTable.removeFilter(field, tableFilter.type, tableFilter.value)
 
-    if (filter.value == '' && type == '=')
-      return
+    if (filter.value != '' || type != '=')
+      ordersTable.addFilter(field, type, filter.value)
 
-    ordersTable.addFilter(field, type, filter.value)
     ordersTable.redraw(true)
   }
 }
