@@ -141,8 +141,12 @@ const ordersTable = new Tabulator('#orders-table', {
 })
 
 const filters = document.querySelectorAll('#filters [data-filtering]')
-ordersTable.on('tableBuilt', () => ordersTable.on('dataFiltered', () => ordersTable.redraw()))
-document.querySelector('#filters [type="reset"]').onclick = () => ordersTable.clearFilter()
+
+document.querySelector('#filters [type="reset"]').onclick = () =>
+{
+  ordersTable.clearFilter()
+  ordersTable.redraw(true)
+}
 
 for (const filter of filters)
 {
@@ -161,5 +165,6 @@ for (const filter of filters)
       return
 
     ordersTable.addFilter(field, type, filter.value)
+    ordersTable.redraw(true)
   }
 }
