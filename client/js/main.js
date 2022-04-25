@@ -117,7 +117,6 @@ const ordersTable = new Tabulator('#orders-table', {
   data: orders, //load row data from array
   layout: 'fitColumns', //fit columns to width of table
   responsiveLayout: 'hide', //hide columns that dont fit on the table
-  tooltips: true, //show tool tips on cells
   addRowPos: 'top', //when adding a new row, add it to the top of the table
   history: true, //allow undo and redo actions on the table
   pagination: 'local', //paginate the data
@@ -142,11 +141,8 @@ const ordersTable = new Tabulator('#orders-table', {
 })
 
 const filters = document.querySelectorAll('#filters [data-filtering]')
-
-document.querySelector('#filters [type="reset"]').onclick = () =>
-{
-  ordersTable.clearFilter()
-}
+ordersTable.on('tableBuilt', () => ordersTable.on('dataFiltered', () => ordersTable.redraw()))
+document.querySelector('#filters [type="reset"]').onclick = () => ordersTable.clearFilter()
 
 for (const filter of filters)
 {
@@ -165,6 +161,5 @@ for (const filter of filters)
       return
 
     ordersTable.addFilter(field, type, filter.value)
-    ordersTable.redraw()
   }
 }
