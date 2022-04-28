@@ -14,7 +14,8 @@ let orders =
   // questo array è temporaneo, per visualizzare i dati sulla tabella
   [
     {
-      name: 'Simone Masi',
+      id: 1,
+      name: 'Utente 2',
       address: 'Via Buongiorno',
       price: 20,
       province: 'FI',
@@ -22,7 +23,8 @@ let orders =
       status: 'non consegnato',
     },
     {
-      name: 'Sandrone',
+      id: 2,
+      name: 'Nome Cognome',
       address: 'Via di casa mia',
       price: 80,
       province: 'FI',
@@ -30,7 +32,8 @@ let orders =
       status: 'non consegnato',
     },
     {
-      name: 'Maurizio Chad',
+      id: 3,
+      name: 'Utente 1',
       address: 'Via del Filarete',
       price: 150,
       province: 'FI',
@@ -38,6 +41,7 @@ let orders =
       status: 'non consegnato',
     },
     {
+      id: 4,
       name: 'Lorenzo Vannini',
       address: 'Via Esempio',
       price: 2050,
@@ -46,7 +50,8 @@ let orders =
       status: 'non consegnato',
     },
     {
-      name: 'Simone Masi',
+      id: 5,
+      name: 'Utente 2',
       address: 'Via Buongiorno',
       price: 20,
       province: 'FI',
@@ -54,7 +59,8 @@ let orders =
       status: 'non consegnato',
     },
     {
-      name: 'Sandrone',
+      id: 6,
+      name: 'Nome Cognome',
       address: 'Via di casa mia',
       price: 80,
       province: 'FI',
@@ -62,7 +68,8 @@ let orders =
       status: 'non consegnato',
     },
     {
-      name: 'Maurizio Chad',
+      id: 7,
+      name: 'Utente 1',
       address: 'Via del Filarete',
       price: 150,
       province: 'FI',
@@ -70,6 +77,7 @@ let orders =
       status: 'non consegnato',
     },
     {
+      id: 8,
       name: 'Lorenzo Vannini',
       address: 'Via Esempio',
       price: 2050,
@@ -78,7 +86,8 @@ let orders =
       status: 'non consegnato',
     },
     {
-      name: 'Simone Masi',
+      id: 9,
+      name: 'Utente 2',
       address: 'Via Buongiorno',
       price: 20,
       province: 'FI',
@@ -86,7 +95,8 @@ let orders =
       status: 'non consegnato',
     },
     {
-      name: 'Sandrone',
+      id: 10,
+      name: 'Nome Cognome',
       address: 'Via di casa mia',
       price: 80,
       province: 'FI',
@@ -94,7 +104,8 @@ let orders =
       status: 'non consegnato',
     },
     {
-      name: 'Maurizio Chad',
+      id: 11,
+      name: 'Utente 1',
       address: 'Via del Filarete',
       price: 150,
       province: 'FI',
@@ -102,6 +113,7 @@ let orders =
       status: 'non consegnato',
     },
     {
+      id: 12,
       name: 'Lorenzo Vannini',
       address: 'Via Esempio',
       price: 2050,
@@ -130,6 +142,7 @@ const ordersTable = new Tabulator('#orders-table', {
   ],
   columns: [
     //define the table columns
+    { title: 'ID', field: 'id', sorter: 'number'},
     { title: 'Nome', field: 'name', sorter: 'string' },
     { title: 'Indirizzo', field: 'address', sorter: 'string' },
     { title: 'Provincia', field: 'province', sorter: 'string' },
