@@ -30,13 +30,13 @@ const ordersTable = new Tabulator('#orders-table', {
   ],
   columns: [
     //define the table columns
-    { title: 'ID', field: 'id', sorter: 'number' },
+    { title: 'ID', field: 'id', sorter: 'number', width: 80 },
     { title: 'Nome', field: 'name', sorter: 'string' },
     { title: 'Indirizzo', field: 'address', sorter: 'string' },
-    { title: 'Provincia', field: 'province', sorter: 'string' },
-    { title: 'Importo', field: 'price', sorter: 'number' },
-    { title: 'Quantità', field: 'quantity', sorter: 'number' },
-    { title: 'Stato', field: 'status', sorter: 'string' },
+    { title: 'Provincia', field: 'province', sorter: 'string', width: 150 },
+    { title: 'Importo', field: 'price', sorter: 'number', width: 150 },
+    { title: 'Quantità', field: 'quantity', sorter: 'number', width: 120 },
+    { title: 'Stato', field: 'status', sorter: 'string', width: 100 },
   ],
 })
 
