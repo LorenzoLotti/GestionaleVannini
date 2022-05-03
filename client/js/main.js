@@ -1,127 +1,14 @@
 /* eslint-disable no-undef */
+let orders = []
+
+document.onload = await updateTable()
 
 document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
 {
   // TODO: implementare il fetch
 }
 
-document.querySelector('#update').onclick = () => // pulsante 'aggiorna'
-{
-  // TODO: implementare il fetch
-}
-
-let orders =
-  // questo array è temporaneo, per visualizzare i dati sulla tabella
-  [
-    {
-      id: 1,
-      name: 'Utente 2',
-      address: 'Via Buongiorno',
-      price: 20,
-      province: 'FI',
-      quantity: 1,
-      status: 'non consegnato',
-    },
-    {
-      id: 2,
-      name: 'Nome Cognome',
-      address: 'Via di casa mia',
-      price: 80,
-      province: 'FI',
-      quantity: 3,
-      status: 'non consegnato',
-    },
-    {
-      id: 3,
-      name: 'Utente 1',
-      address: 'Via del Filarete',
-      price: 150,
-      province: 'FI',
-      quantity: 1,
-      status: 'non consegnato',
-    },
-    {
-      id: 4,
-      name: 'Lorenzo Vannini',
-      address: 'Via Esempio',
-      price: 2050,
-      province: 'FI',
-      quantity: 10,
-      status: 'non consegnato',
-    },
-    {
-      id: 5,
-      name: 'Utente 2',
-      address: 'Via Buongiorno',
-      price: 20,
-      province: 'FI',
-      quantity: 1,
-      status: 'non consegnato',
-    },
-    {
-      id: 6,
-      name: 'Nome Cognome',
-      address: 'Via di casa mia',
-      price: 80,
-      province: 'FI',
-      quantity: 3,
-      status: 'non consegnato',
-    },
-    {
-      id: 7,
-      name: 'Utente 1',
-      address: 'Via del Filarete',
-      price: 150,
-      province: 'FI',
-      quantity: 1,
-      status: 'non consegnato',
-    },
-    {
-      id: 8,
-      name: 'Lorenzo Vannini',
-      address: 'Via Esempio',
-      price: 2050,
-      province: 'FI',
-      quantity: 10,
-      status: 'non consegnato',
-    },
-    {
-      id: 9,
-      name: 'Utente 2',
-      address: 'Via Buongiorno',
-      price: 20,
-      province: 'FI',
-      quantity: 1,
-      status: 'non consegnato',
-    },
-    {
-      id: 10,
-      name: 'Nome Cognome',
-      address: 'Via di casa mia',
-      price: 80,
-      province: 'FI',
-      quantity: 3,
-      status: 'non consegnato',
-    },
-    {
-      id: 11,
-      name: 'Utente 1',
-      address: 'Via del Filarete',
-      price: 150,
-      province: 'FI',
-      quantity: 1,
-      status: 'non consegnato',
-    },
-    {
-      id: 12,
-      name: 'Lorenzo Vannini',
-      address: 'Via Esempio',
-      price: 2050,
-      province: 'FI',
-      quantity: 10,
-      status: 'non consegnato',
-    },
-  ]
+document.querySelector('#update').onclick = updateTable
 
 // questa costante contiene la configurazione della tabella (docs: http://tabulator.info/docs/5.2)
 
@@ -139,11 +26,11 @@ const ordersTable = new Tabulator('#orders-table', {
   height: '100%',
   initialSort: [
     //set the initial sort order of the data
-    { column: 'name', dir: 'asc' },
+    { column: 'id', dir: 'asc' },
   ],
   columns: [
     //define the table columns
-    { title: 'ID', field: 'id', sorter: 'number'},
+    { title: 'ID', field: 'id', sorter: 'number' },
     { title: 'Nome', field: 'name', sorter: 'string' },
     { title: 'Indirizzo', field: 'address', sorter: 'string' },
     { title: 'Provincia', field: 'province', sorter: 'string' },
@@ -179,4 +66,27 @@ for (const filter of filters)
 
     ordersTable.redraw(true)
   }
+}
+
+async function updateTable()
+{
+  orders = []
+  fetch('https://www.lorenzovanninicartoon.it/wp-json/wc/v3/orders?consumer_key=ck_5e3935dba51f97aac57b66c54114d0533d05b2b4&consumer_secret=cs_b0917917251f05026baec7dabb70df199b84dcad')
+    .then(response => response.json()).then(data =>
+    {
+      for (const order of data)
+      {
+        orders.push({
+          id: order.id,
+          name: `${order.billing.first_name} ${order.billing.last_name}`,
+          address: order.billing.address_1,
+          province: order.billing.state,
+          price: `${order.total} €`,
+          quantity: order.line_items.length,
+          status: order.status,
+        })
+      }
+
+      ordersTable.setData(orders)
+    })
 }
