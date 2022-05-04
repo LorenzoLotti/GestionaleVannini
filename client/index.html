@@ -3,14 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link
-      href="https://unpkg.com/tabulator-tables@5.2.1/dist/css/tabulator_semanticui.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="css/tabulator.css" rel="stylesheet" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
     <title>Index</title>
   </head>
@@ -21,28 +15,57 @@
       </h1>
     </header>
     <div class="text-center">
-      <button class="btn btn-primary fs-5 fw-bolder w-50" data-bs-toggle="collapse" data-bs-target="#filters">
-        <span>
-          filtri
-        </span>
+      <button
+        class="btn btn-primary fs-5 fw-bolder w-50"
+        data-bs-toggle="collapse"
+        data-bs-target="#filters"
+      >
+        <span> filtri </span>
       </button>
     </div>
-    <form id="filters" class="collapse card container-md mx-3 mx-md-auto my-3 p-3 shadow-sm w-auto">
+    <form
+      id="filters"
+      class="collapse card container-md mx-3 mx-md-auto my-3 p-3 shadow-sm w-auto"
+    >
+      <div class="input-group m-2 w-auto">
+        <span class="input-group-text">ID</span>
+        <input
+          type="number"
+          class="form-control"
+          min="0"
+          data-filtering="id"
+          data-ftype="like"
+        />
+      </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Nome</span>
-        <input class="form-control" data-filtering="name" data-ftype="like">
+        <input class="form-control" data-filtering="name" data-ftype="like" />
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Indirizzo</span>
-        <input class="form-control" data-filtering="address" data-ftype="like">
+        <input
+          class="form-control"
+          data-filtering="address"
+          data-ftype="like"
+        />
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Provincia</span>
-        <input class="form-control" data-filtering="province" data-ftype="like">
+        <input
+          class="form-control"
+          data-filtering="province"
+          data-ftype="like"
+        />
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Importo</span>
-        <input type="number" class="form-control" min="0" data-filtering="price" data-ftype="like">
+        <input
+          type="number"
+          class="form-control"
+          min="0"
+          data-filtering="price"
+          data-ftype="like"
+        />
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Quantità</span>
@@ -52,7 +75,7 @@
           data-filtering="quantity"
           data-ftype="like"
           min="0"
-        >
+        />
       </div>
       <div class="input-group m-2 w-auto">
         <span class="input-group-text">Stato</span>
@@ -64,23 +87,14 @@
       </div>
       <button type="reset" class="btn btn-danger m-2">Elimina filtri</button>
     </form>
-    <br>
+    <br />
     <div id="orders-table" class="rounded-0"></div>
-    <button id="update" class="btn btn-primary fw-bolder m-2">
-      Aggiorna
-    </button>
+    <button id="update" class="btn btn-primary fw-bolder m-2">Aggiorna</button>
     <button id="transfer" class="btn btn-success fw-bolder m-2">
       Trasferisci
     </button>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/tabulator-tables@5.2.1/dist/js/tabulator.min.js"
-    ></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/tabulator.js"></script>
     <script type="module" src="js/main.js"></script>
   </body>
 </html>

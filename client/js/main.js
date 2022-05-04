@@ -1,8 +1,6 @@
 /* eslint-disable no-undef */
 let orders = []
 
-document.onload = await updateTable()
-
 document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
 {
   // TODO: implementare il fetch
@@ -40,6 +38,11 @@ const ordersTable = new Tabulator('#orders-table', {
   ],
 })
 
+ordersTable.on('tableBuilt', () =>
+{
+  updateTable()
+})
+
 const filters = document.querySelectorAll('#filters [data-filtering]')
 
 document.querySelector('#filters [type="reset"]').onclick = () =>
@@ -71,7 +74,7 @@ for (const filter of filters)
 async function updateTable()
 {
   orders = []
-  fetch('https://www.lorenzovanninicartoon.it/wp-json/wc/v3/orders?consumer_key=ck_5e3935dba51f97aac57b66c54114d0533d05b2b4&consumer_secret=cs_b0917917251f05026baec7dabb70df199b84dcad')
+  fetch('/orders')
     .then(response => response.json()).then(data =>
     {
       for (const order of data)
@@ -83,7 +86,7 @@ async function updateTable()
           province: order.billing.state,
           price: `${order.total} €`,
           quantity: order.line_items.length,
-          status: order.status,
+          status: order.status.replace('on-hold', 'non consegnato'),
         })
       }
 
