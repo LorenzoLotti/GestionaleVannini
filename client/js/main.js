@@ -94,7 +94,7 @@ async function updateTable()
           name: `${order.billing.first_name} ${order.billing.last_name}`,
           address: order.billing.address_1,
           province: order.billing.state,
-          price: `${order.total} €`,
+          price: `${order.total}`,
           quantity: order.line_items.length,
           status: order.status.replace('on-hold', 'non consegnato'),
         })

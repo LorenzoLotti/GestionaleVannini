@@ -1,11 +1,11 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import WooCommerceAPI from 'woocommerce-api'
+import mysql from 'mysql2'
 
-var mysql = require('mysql');
 var pool  = mysql.createPool({
   connectionLimit : 10,
-  host            : '172.17.0.1',
+  host            : '172.17.0.2',
   user            : 'root',
   password        : '1234',
   database        : 'gestionale'
@@ -38,15 +38,50 @@ app.get('/orders', (req, res) =>
 
 app.post('/saveOrders', (req, res) =>
 {
-  console.log(req.body)
+  var query = "INSERT INTO product("
+
   req.body.forEach(element => {
+
     for(var k in element)
     {
-      console.log("chiave", k,"valore", element[k]) 
+      query += k + ","  
     }
+
+    query = query.slice(0, -1)
+    query += ") VALUES ("
+
+    for(var k in element)
+    {
+      query += "'" + element[k] + "'" + ","
+    }
+    query = query.slice(0, -1)
+    query += ");"
+
+    pool.query(query, function(err, rows, fields){
+      if(err) throw err;
+    });
+
+    query = "INSERT INTO product("
   });
 
   res.end()
+
+  getAllData()
 })
+
+function getAllData()
+{
+    var query = "SELECT * FROM product"
+
+    pool.query(query, function(err, rows, fields)
+    {
+      if(err) throw err;
+    
+        for(var i = 0; i < rows.length; i++)
+        {
+          console.log(rows[i])
+        }
+    });
+}
 
 app.listen(8080)
