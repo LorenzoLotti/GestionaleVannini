@@ -2,14 +2,14 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import WooCommerceAPI from 'woocommerce-api'
 
-var mysql = require('mysql');
+var mysql = require('mysql')
 var pool  = mysql.createPool({
   connectionLimit : 10,
   host            : '172.17.0.1',
   user            : 'root',
   password        : '1234',
   database        : 'gestionale'
-});
+})
 
 const app = express()
 
@@ -42,9 +42,9 @@ app.post('/saveOrders', (req, res) =>
   req.body.forEach(element => {
     for(var k in element)
     {
-      console.log("chiave", k,"valore", element[k]) 
+      console.log('chiave', k,'valore', element[k])
     }
-  });
+  })
 
   res.end()
 })
