@@ -9,7 +9,7 @@ var pool  = mysql.createPool({
   user            : 'root',
   password        : '1234',
   database        : 'gestionale'
-});
+})
 
 const app = express()
 
