@@ -1,7 +1,19 @@
 import express from 'express'
+import bodyParser from 'body-parser'
 import WooCommerceAPI from 'woocommerce-api'
 
+var mysql = require('mysql');
+var pool  = mysql.createPool({
+  connectionLimit : 10,
+  host            : '172.17.0.1',
+  user            : 'root',
+  password        : '1234',
+  database        : 'gestionale'
+});
+
 const app = express()
+
+app.use(bodyParser.json())
 app.use(express.static('client'))
 
 const wooCommerce = new WooCommerceAPI({
@@ -14,6 +26,7 @@ const wooCommerce = new WooCommerceAPI({
 
 app.get('/orders', (req, res) =>
 {
+  console.log(req.query)
   wooCommerce.get('orders', (wcErr, wcData, wcRes) =>
   {
     if (wcErr)
@@ -21,6 +34,19 @@ app.get('/orders', (req, res) =>
     else
       res.send(wcRes).end()
   })
+})
+
+app.post('/saveOrders', (req, res) =>
+{
+  console.log(req.body)
+  req.body.forEach(element => {
+    for(var k in element)
+    {
+      console.log("chiave", k,"valore", element[k]) 
+    }
+  });
+
+  res.end()
 })
 
 app.listen(8080)

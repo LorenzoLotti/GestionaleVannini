@@ -3,8 +3,18 @@ let orders = []
 
 document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
 {
-  // TODO: implementare il fetch
-}
+
+    fetch('/saveOrders', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orders)
+    }).then((result) => {console.log(result)});
+  
+  }
+
 
 document.querySelector('#update').onclick = updateTable
 
