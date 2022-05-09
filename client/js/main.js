@@ -48,10 +48,10 @@ const ordersTable = new Tabulator('#orders-table', {
   ],
 })
 
-ordersTable.on('tableBuilt', () =>
-{
-  updateTable()
-})
+//ordersTable.on('tableBuilt', () =>
+//{
+  //updateTable()
+//})
 
 const filters = document.querySelectorAll('#filters [data-filtering]')
 
@@ -84,6 +84,29 @@ for (const filter of filters)
 async function updateTable()
 {
   orders = []
+  fetch('/ordersDB').then(response => response.json()).then(data =>
+    {
+      for (const order of data)
+      {
+        console.log("Ciao:" + order.id)
+        orders.push({
+          id: data[order],
+          name: `${data[order]} ${data[order]}`,
+          address: data[order],
+          province: data[order],
+          price: `${data[order]}`,
+          quantity: data[order],
+          status: data[order].replace('on-hold', 'non consegnato'),
+        })
+      }
+      
+      ordersTable.setData(orders)
+    })
+}
+/*
+async function updateTable()
+{
+  orders = []
   fetch('/orders')
     .then(response => response.json()).then(data =>
     {
@@ -102,4 +125,4 @@ async function updateTable()
 
       ordersTable.setData(orders)
     })
-}
+}*/

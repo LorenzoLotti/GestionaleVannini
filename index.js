@@ -24,6 +24,11 @@ const wooCommerce = new WooCommerceAPI({
   version: 'wc/v3',
 })
 
+app.get('/ordersDB', (req, res) =>
+{
+    res.send(getAllData()).end()
+})
+/*
 app.get('/orders', (req, res) =>
 {
   console.log(req.query)
@@ -34,7 +39,7 @@ app.get('/orders', (req, res) =>
     else
       res.send(wcRes).end()
   })
-})
+})*/
 
 app.post('/saveOrders', (req, res) =>
 {
@@ -72,6 +77,7 @@ app.post('/saveOrders', (req, res) =>
 function getAllData()
 {
     var query = "SELECT * FROM product"
+    var json =""
 
     pool.query(query, function(err, rows, fields)
     {
@@ -79,8 +85,9 @@ function getAllData()
     
         for(var i = 0; i < rows.length; i++)
         {
-          console.log(rows[i])
+          json += rows[i]
         }
+         return json;
     });
 }
 
