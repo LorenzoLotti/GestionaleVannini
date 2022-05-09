@@ -15,8 +15,7 @@ document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
 
 }
 
-
-document.querySelector('#update').onclick = updateTable
+document.querySelector('#update').onclick = updateTableFromDB
 
 // questa costante contiene la configurazione della tabella (docs: http://tabulator.info/docs/5.2)
 
@@ -81,48 +80,38 @@ for (const filter of filters)
   }
 }
 
-async function updateTable()
+async function updateTableFromDB()
 {
   orders = []
-  fetch('/ordersDB').then(response => response.json()).then(data =>
-    {
-      for (const order of data)
-      {
-        console.log("Ciao:" + order.id)
-        orders.push({
-          id: data[order],
-          name: `${data[order]} ${data[order]}`,
-          address: data[order],
-          province: data[order],
-          price: `${data[order]}`,
-          quantity: data[order],
-          status: data[order].replace('on-hold', 'non consegnato'),
-        })
-      }
-      
-      ordersTable.setData(orders)
-    })
-}
-/*
-async function updateTable()
-{
-  orders = []
-  fetch('/orders')
+  fetch('/ordersDB')
     .then(response => response.json()).then(data =>
     {
       for (const order of data)
       {
-        orders.push({
+        let orderObject = {
           id: order.id,
-          name: `${order.billing.first_name} ${order.billing.last_name}`,
-          address: order.billing.address_1,
-          province: order.billing.state,
-          price: `${order.total}`,
-          quantity: order.line_items.length,
-          status: order.status.replace('on-hold', 'non consegnato'),
-        })
-      }
+          name: order.name,
+          address: order.address,
+          province: order.province,
+          country: order.country,
+          price: `${order.price} €`,
+          quantity: order.quantity,
+          status: order.status,
+          //items: []
+        }
 
+        // for (const lineItem of order.line_items)
+        // {
+        //   orderObject.items.push({
+        //     name: lineItem.name,
+        //     price: lineItem.price,
+        //     quantity: lineItem.quantity
+        //   })
+        // }
+
+        orders.push(orderObject)
+      }
+      console.log(orders)
       ordersTable.setData(orders)
     })
-}*/
+}

@@ -3,12 +3,12 @@ import bodyParser from 'body-parser'
 import WooCommerceAPI from 'woocommerce-api'
 import mysql from 'mysql2'
 
-var pool  = mysql.createPool({
-  connectionLimit : 10,
-  host            : '172.17.0.2',
-  user            : 'root',
-  password        : '1234',
-  database        : 'gestionale'
+var pool = mysql.createPool({
+  connectionLimit: 10,
+  host: '172.17.0.1',
+  user: 'root',
+  password: '1234',
+  database: 'gestionale'
 })
 
 const app = express()
@@ -24,46 +24,46 @@ const wooCommerce = new WooCommerceAPI({
   version: 'wc/v3',
 })
 
-app.get('/ordersDB', (req, res) =>
-{
-    res.send(getAllData()).end()
-})
-/*
-app.get('/orders', (req, res) =>
-{
-  console.log(req.query)
-  wooCommerce.get('orders', (wcErr, wcData, wcRes) =>
+app.get('/ordersDB', (req, res) => {
+  pool.query('SELECT * FROM product', (err, results) =>
   {
+    if (err)
+      res.status(500).send(err)
+    else
+      res.status(200).send(results)
+  })
+})
+
+app.get('/orders', (req, res) => {
+  wooCommerce.get('orders', (wcErr, wcData, wcRes) => {
     if (wcErr)
       res.status(500).send(wcErr)
     else
-      res.send(wcRes).end()
+      console.log(wcRes)
+    res.send(wcRes).end()
   })
-})*/
+})
 
-app.post('/saveOrders', (req, res) =>
-{
+app.post('/saveOrders', (req, res) => {
   var query = "INSERT INTO product("
 
   req.body.forEach(element => {
 
-    for(var k in element)
-    {
-      query += k + ","  
+    for (var k in element) {
+      query += k + ","
     }
 
     query = query.slice(0, -1)
     query += ") VALUES ("
 
-    for(var k in element)
-    {
+    for (var k in element) {
       query += "'" + element[k] + "'" + ","
     }
     query = query.slice(0, -1)
     query += ");"
 
-    pool.query(query, function(err, rows, fields){
-      if(err) throw err;
+    pool.query(query, function (err, rows, fields) {
+      if (err) throw err;
     });
 
     query = "INSERT INTO product("
@@ -71,24 +71,32 @@ app.post('/saveOrders', (req, res) =>
 
   res.end()
 
-  getAllData()
+  //getAllData()
 })
 
-function getAllData()
-{
-    var query = "SELECT * FROM product"
-    var json =""
 
-    pool.query(query, function(err, rows, fields)
+/*
+async function updateTableFromWooCommerce()
+{
+  orders = []
+  fetch('/orders')
+    .then(response => response.json()).then(data =>
     {
-      if(err) throw err;
-    
-        for(var i = 0; i < rows.length; i++)
-        {
-          json += rows[i]
-        }
-         return json;
-    });
+      for (const order of data)
+      {
+        orders.push({
+          id: order.id,
+          name: `${order.billing.first_name} ${order.billing.last_name}`,
+          address: order.billing.address_1,
+          province: order.billing.state,
+          price: `${order.total}`,
+          quantity: order.line_items.length,
+          status: order.status.replace('on-hold', 'non consegnato'),
+        })
+      }
+      ordersTable.setData(orders)
+    })
 }
+*/
 
 app.listen(8080)
