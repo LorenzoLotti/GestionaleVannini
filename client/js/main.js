@@ -12,7 +12,6 @@ document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
     },
     body: JSON.stringify(orders)
   }).then((result) => { console.log(result) })
-
 }
 
 document.querySelector('#update').onclick = updateTableFromDB
@@ -39,18 +38,23 @@ const ordersTable = new Tabulator('#orders-table', {
     //define the table columns
     { title: 'ID', field: 'id', sorter: 'number', width: 80 },
     { title: 'Nome', field: 'name', sorter: 'string' },
-    { title: 'Indirizzo', field: 'address', sorter: 'string' },
+    { title: 'Nazione', field: 'country', sorter: 'string', width: 120},
     { title: 'Provincia', field: 'province', sorter: 'string', width: 150 },
+    { title: 'Indirizzo', field: 'address', sorter: 'string' },
     { title: 'Importo', field: 'price', sorter: 'number', width: 150 },
     { title: 'Quantità', field: 'quantity', sorter: 'number', width: 120 },
     { title: 'Stato', field: 'status', sorter: 'string', width: 100 },
   ],
 })
 
-//ordersTable.on('tableBuilt', () =>
-//{
-  //updateTable()
-//})
+ordersTable.on('tableBuilt', () =>
+{
+  fetch('/orders').then(response => response.json()).then(data =>
+    {
+      orders = data
+      ordersTable.setData(orders)
+    })
+})
 
 const filters = document.querySelectorAll('#filters [data-filtering]')
 
@@ -80,38 +84,20 @@ for (const filter of filters)
   }
 }
 
+let updating = false
+
 async function updateTableFromDB()
 {
+  if (updating)
+    return
+
+  updating = true
   orders = []
-  fetch('/ordersDB')
+  fetch('/update')
     .then(response => response.json()).then(data =>
     {
-      for (const order of data)
-      {
-        let orderObject = {
-          id: order.id,
-          name: order.name,
-          address: order.address,
-          province: order.province,
-          country: order.country,
-          price: `${order.price} €`,
-          quantity: order.quantity,
-          status: order.status,
-          //items: []
-        }
-
-        // for (const lineItem of order.line_items)
-        // {
-        //   orderObject.items.push({
-        //     name: lineItem.name,
-        //     price: lineItem.price,
-        //     quantity: lineItem.quantity
-        //   })
-        // }
-
-        orders.push(orderObject)
-      }
-      console.log(orders)
+      orders = data
       ordersTable.setData(orders)
+      updating = false
     })
 }

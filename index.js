@@ -12,7 +12,6 @@ var pool = mysql.createPool({
 })
 
 const app = express()
-
 app.use(bodyParser.json())
 app.use(express.static('client'))
 
@@ -24,30 +23,104 @@ const wooCommerce = new WooCommerceAPI({
   version: 'wc/v3',
 })
 
-app.get('/ordersDB', (req, res) => {
-  pool.query('SELECT * FROM product', (err, results) =>
-  {
-    if (err)
-      res.status(500).send(err)
-    else
-      res.status(200).send(results)
-  })
-})
 
-app.get('/orders', (req, res) => {
+app.get('/update', (req, res) => {
+  // aggiorna il db con i nuovi prodotti da woocommerce
+  wooCommerce.get('products', (wcErr, wcData, wcRes) =>
+  {
+    if (wcErr)
+    {
+      res.status(500).send(wcErr)
+      return
+    }
+
+    wcRes = JSON.parse(wcRes)
+    console.log(wcRes)
+    pool.query('DELETE FROM products', (err, results) =>
+    {
+      if (err)
+      {
+        res.status(500).send(err)
+        return
+      }
+
+    })
+  })
+
+  // aggiorna il db con i nuovi ordini da woocommerce e ritorna il prodotto finale
   wooCommerce.get('orders', (wcErr, wcData, wcRes) => {
     if (wcErr)
       res.status(500).send(wcErr)
-    else
-      console.log(wcRes)
-    res.send(wcRes).end()
+    else {
+      wcRes = JSON.parse(wcRes)
+
+      pool.query('SELECT * FROM orders', (err, results) => {
+        if (err)
+          res.status(500).send(err)
+        else {
+          const orders = []
+          const ids = []
+
+          for (const order of results)
+            ids.push(order.id)
+
+          for (const order of wcRes)
+          {
+            if (ids.includes(order.id))
+              continue
+
+            const orderObject = {
+              id: order.id,
+              name: `${order.billing.first_name} ${order.billing.last_name}`,
+              address: order.billing.address_1,
+              province: order.billing.state,
+              country: order.billing.country,
+              price: `${order.total}`,
+              quantity: order.line_items.length,
+              status: order.status.replace('on-hold', 'non trasferito'),
+              items: ''
+            }
+
+            for (const item of order.line_items) {
+              orderObject.items += item.id + ','
+            }
+
+            orderObject.items = orderObject.items.slice(0, -1)
+            orders.push(orderObject)
+          }
+
+          if (orders.length == 0)
+          {
+            res.send(results).end()
+            return
+          }
+
+          insertDB('orders', orders)
+          res.send([...results, ...orders]).end()
+        }
+      })
+    }
   })
 })
 
-app.post('/saveOrders', (req, res) => {
-  var query = "INSERT INTO product("
+app.get('/orders', (req, res) => // fetcha il db e lo restituisce
+{
+  pool.query('SELECT * FROM orders', (err, results) => {
+    if (err)
+      res.status(500).send(err)
+    else
+      res.send(results).end()
+  })
+})
 
-  req.body.forEach(element => {
+// app.post('/transfer', (req, res) => {
+// })
+
+function insertDB(tableName, array)
+{
+  let query = "INSERT INTO " + tableName + "("
+
+  array.forEach(element => {
 
     for (var k in element) {
       query += k + ","
@@ -66,37 +139,8 @@ app.post('/saveOrders', (req, res) => {
       if (err) throw err;
     });
 
-    query = "INSERT INTO product("
+    query = "INSERT INTO " + tableName + "("
   });
-
-  res.end()
-
-  //getAllData()
-})
-
-
-/*
-async function updateTableFromWooCommerce()
-{
-  orders = []
-  fetch('/orders')
-    .then(response => response.json()).then(data =>
-    {
-      for (const order of data)
-      {
-        orders.push({
-          id: order.id,
-          name: `${order.billing.first_name} ${order.billing.last_name}`,
-          address: order.billing.address_1,
-          province: order.billing.state,
-          price: `${order.total}`,
-          quantity: order.line_items.length,
-          status: order.status.replace('on-hold', 'non consegnato'),
-        })
-      }
-      ordersTable.setData(orders)
-    })
 }
-*/
 
 app.listen(8080)
