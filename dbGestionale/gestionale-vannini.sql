@@ -3,9 +3,9 @@ CREATE DATABASE gestionale;
 
 USE gestionale;
 
-CREATE TABLE IF NOT EXISTS product
+CREATE TABLE IF NOT EXISTS orders
 (
-	  id INT NOT NULL PRIMARY KEY,
+	id INT NOT NULL PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
     address VARCHAR(128) NOT NULL,
     province VARCHAR(128) NOT NULL,
@@ -13,4 +13,11 @@ CREATE TABLE IF NOT EXISTS product
     price DOUBLE NOT NULL CHECK (price >= 0),
     quantity INT NOT NULL CHECK (quantity >= 0),
     status VARCHAR(128) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS product
+(
+   id INT NOT NULL PRIMARY KEY,
+   name_product VARCHAR(128) NOT NULL,
+   id_orders INT NOT NULL REFERENCES orders(id)
 );
