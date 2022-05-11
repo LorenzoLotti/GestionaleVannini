@@ -1,16 +1,17 @@
 /* eslint-disable no-undef */
 let orders = []
+let selectedOrders = []
 
 document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
 {
 
-  fetch('/saveOrders', {
+  fetch('/transfer', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(orders)
+    body: JSON.stringify(selectedOrders)
   }).then((result) => { console.log(result) })
 }
 
@@ -32,7 +33,7 @@ const ordersTable = new Tabulator('#orders-table', {
   height: '100%',
   initialSort: [
     //set the initial sort order of the data
-    { column: 'id', dir: 'asc' },
+    { column: 'status', dir: 'asc' },
   ],
   columns: [
     //define the table columns
@@ -43,7 +44,7 @@ const ordersTable = new Tabulator('#orders-table', {
     { title: 'Indirizzo', field: 'address', sorter: 'string' },
     { title: 'Importo', field: 'price', sorter: 'number', width: 150 },
     { title: 'Quantità', field: 'quantity', sorter: 'number', width: 120 },
-    { title: 'Stato', field: 'status', sorter: 'string', width: 100 },
+    { title: 'Stato', field: 'status', sorter: 'boolean', width: 100, formatter: 'tickCross' }
   ],
 })
 
@@ -54,6 +55,17 @@ ordersTable.on('tableBuilt', () =>
       orders = data
       ordersTable.setData(orders)
     })
+})
+
+ordersTable.on('cellClick', (e, cell) =>
+{
+  cell.getValue()
+  if (cell.getColumn().getField() === 'status' && (cell.getValue() == 'false'))
+  {
+    cell.setValue(true)
+    selectedOrders.push(cell.getRow().getData().id)
+    console.log(selectedOrders)
+  }
 })
 
 const filters = document.querySelectorAll('#filters [data-filtering]')

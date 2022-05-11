@@ -26,26 +26,26 @@ const wooCommerce = new WooCommerceAPI({
 
 app.get('/update', (req, res) => {
   // aggiorna il db con i nuovi prodotti da woocommerce
-  wooCommerce.get('products', (wcErr, wcData, wcRes) =>
-  {
-    if (wcErr)
-    {
-      res.status(500).send(wcErr)
-      return
-    }
+  // wooCommerce.get('products', (wcErr, wcData, wcRes) =>
+  // {
+  //   if (wcErr)
+  //   {
+  //     res.status(500).send(wcErr)
+  //     return
+  //   }
 
-    wcRes = JSON.parse(wcRes)
-    console.log(wcRes)
-    pool.query('DELETE FROM products', (err, results) =>
-    {
-      if (err)
-      {
-        res.status(500).send(err)
-        return
-      }
+  //   wcRes = JSON.parse(wcRes)
+  //   console.log(wcRes)
+  //   pool.query('DELETE FROM products', (err, results) =>
+  //   {
+  //     if (err)
+  //     {
+  //       res.status(500).send(err)
+  //       return
+  //     }
 
-    })
-  })
+  //   })
+  // })
 
   // aggiorna il db con i nuovi ordini da woocommerce e ritorna il prodotto finale
   wooCommerce.get('orders', (wcErr, wcData, wcRes) => {
@@ -77,7 +77,7 @@ app.get('/update', (req, res) => {
               country: order.billing.country,
               price: `${order.total}`,
               quantity: order.line_items.length,
-              status: order.status.replace('on-hold', 'non trasferito'),
+              status: false,
               items: ''
             }
 
@@ -113,8 +113,12 @@ app.get('/orders', (req, res) => // fetcha il db e lo restituisce
   })
 })
 
-// app.post('/transfer', (req, res) => {
-// })
+app.post('/transfer', (req, res) => {
+    for (const id of req.body)
+    {
+      pool.query(`UPDATE orders SET status = 'true' WHERE id = ${id}`)
+    }
+})
 
 function insertDB(tableName, array)
 {
