@@ -39,7 +39,7 @@ const ordersTable = new Tabulator('#orders-table', {
     //define the table columns
     { title: 'ID', field: 'id', sorter: 'number', width: 80 },
     { title: 'Nome', field: 'name', sorter: 'string' },
-    { title: 'Nazione', field: 'country', sorter: 'string', width: 120},
+    { title: 'Nazione', field: 'country', sorter: 'string', width: 120 },
     { title: 'Provincia', field: 'province', sorter: 'string', width: 150 },
     { title: 'Indirizzo', field: 'address', sorter: 'string' },
     { title: 'Importo', field: 'price', sorter: 'number', width: 150 },
@@ -51,15 +51,16 @@ const ordersTable = new Tabulator('#orders-table', {
 ordersTable.on('tableBuilt', () =>
 {
   fetch('/orders').then(response => response.json()).then(data =>
-    {
-      orders = data
-      ordersTable.setData(orders)
-    })
+  {
+    orders = data
+    ordersTable.setData(orders)
+  })
 })
 
 ordersTable.on('cellClick', (e, cell) =>
 {
   cell.getValue()
+  
   if (cell.getColumn().getField() === 'status' && (cell.getValue() == 'false'))
   {
     cell.setValue(true)

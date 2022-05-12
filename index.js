@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import WooCommerceAPI from 'woocommerce-api'
 import mysql from 'mysql2'
 
-var pool = mysql.createPool({
+const pool = mysql.createPool({
   connectionLimit: 10,
   host: '172.17.0.1',
   user: 'root',
@@ -24,7 +24,8 @@ const wooCommerce = new WooCommerceAPI({
 })
 
 
-app.get('/update', (req, res) => {
+app.get('/update', (req, res) =>
+{
   // aggiorna il db con i nuovi prodotti da woocommerce
   // wooCommerce.get('products', (wcErr, wcData, wcRes) =>
   // {
@@ -48,16 +49,20 @@ app.get('/update', (req, res) => {
   // })
 
   // aggiorna il db con i nuovi ordini da woocommerce e ritorna il prodotto finale
-  wooCommerce.get('orders', (wcErr, wcData, wcRes) => {
+  wooCommerce.get('orders', (wcErr, wcData, wcRes) =>
+  {
     if (wcErr)
       res.status(500).send(wcErr)
-    else {
+    else
+    {
       wcRes = JSON.parse(wcRes)
 
-      pool.query('SELECT * FROM orders', (err, results) => {
+      pool.query('SELECT * FROM orders', (err, results) =>
+      {
         if (err)
           res.status(500).send(err)
-        else {
+        else
+        {
           const orders = []
           const ids = []
 
@@ -81,7 +86,8 @@ app.get('/update', (req, res) => {
               items: ''
             }
 
-            for (const item of order.line_items) {
+            for (const item of order.line_items)
+            {
               orderObject.items += item.id + ','
             }
 
@@ -105,7 +111,8 @@ app.get('/update', (req, res) => {
 
 app.get('/orders', (req, res) => // fetcha il db e lo restituisce
 {
-  pool.query('SELECT * FROM orders', (err, results) => {
+  pool.query('SELECT * FROM orders', (err, results) =>
+  {
     if (err)
       res.status(500).send(err)
     else
@@ -113,38 +120,44 @@ app.get('/orders', (req, res) => // fetcha il db e lo restituisce
   })
 })
 
-app.post('/transfer', (req, res) => {
-    for (const id of req.body)
-    {
-      pool.query(`UPDATE orders SET status = 'true' WHERE id = ${id}`)
-    }
+app.post('/transfer', (req, res) =>
+{
+  for (const id of req.body)
+  {
+    pool.query(`UPDATE orders SET status = 'true' WHERE id = ${id}`)
+  }
 })
 
 function insertDB(tableName, array)
 {
-  let query = "INSERT INTO " + tableName + "("
+  let query = 'INSERT INTO ' + tableName + '('
 
-  array.forEach(element => {
+  array.forEach(element =>
+  {
 
-    for (var k in element) {
-      query += k + ","
+    for (const k in element)
+    {
+      query += k + ','
     }
 
     query = query.slice(0, -1)
-    query += ") VALUES ("
+    query += ') VALUES ('
 
-    for (var k in element) {
-      query += "'" + element[k] + "'" + ","
+    for (const k in element)
+    {
+      query += '\'' + element[k] + '\'' + ','
     }
+
     query = query.slice(0, -1)
-    query += ");"
+    query += ');'
 
-    pool.query(query, function (err, rows, fields) {
-      if (err) throw err;
-    });
+    pool.query(query, function (err, rows, fields)
+    {
+      if (err) throw err
+    })
 
-    query = "INSERT INTO " + tableName + "("
-  });
+    query = 'INSERT INTO ' + tableName + '('
+  })
 }
 
 app.listen(8080)
