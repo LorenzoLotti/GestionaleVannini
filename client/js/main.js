@@ -12,7 +12,7 @@ document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(selectedOrders)
-  }).then((result) => { console.log(result) })
+  })
 }
 
 document.querySelector('#update').onclick = updateTableFromDB
@@ -59,13 +59,10 @@ ordersTable.on('tableBuilt', () =>
 
 ordersTable.on('cellClick', (e, cell) =>
 {
-  cell.getValue()
-  
   if (cell.getColumn().getField() === 'status' && (cell.getValue() == 'false'))
   {
     cell.setValue(true)
     selectedOrders.push(cell.getRow().getData().id)
-    console.log(selectedOrders)
   }
 })
 
