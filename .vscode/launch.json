@@ -1,0 +1,11 @@
+{
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "name": "Run Script: test",
+      "request": "launch",
+      "command": "/home/iquick/.nvm/versions/node/v18.1.0/bin/node .",
+      "cwd": "${workspaceFolder}",
+    }
+  ]
+}

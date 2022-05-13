@@ -23,89 +23,94 @@ const wooCommerce = new WooCommerceAPI({
   version: 'wc/v3',
 })
 
-
 app.get('/update', (req, res) =>
 {
-  // aggiorna il db con i nuovi prodotti da woocommerce
-  // wooCommerce.get('products', (wcErr, wcData, wcRes) =>
-  // {
-  //   if (wcErr)
-  //   {
-  //     res.status(500).send(wcErr)
-  //     return
-  //   }
-
-  //   wcRes = JSON.parse(wcRes)
-  //   console.log(wcRes)
-  //   pool.query('DELETE FROM products', (err, results) =>
-  //   {
-  //     if (err)
-  //     {
-  //       res.status(500).send(err)
-  //       return
-  //     }
-
-  //   })
-  // })
-
-  // aggiorna il db con i nuovi ordini da woocommerce e ritorna il prodotto finale
-  wooCommerce.get('orders', (wcErr, wcData, wcRes) =>
+  //aggiorna il db con i nuovi prodotti da woocommerce
+  wooCommerce.get('products', (wcErr, wcData, wcRes) =>
   {
     if (wcErr)
-      res.status(500).send(wcErr)
-    else
     {
-      wcRes = JSON.parse(wcRes)
+      res.status(500).send(wcErr)
+      return
+    }
 
-      pool.query('SELECT * FROM orders', (err, results) =>
+    wcRes = JSON.parse(wcRes)
+
+    pool.query('DELETE FROM products', (err, results) =>
+    {
+      if (err)
       {
-        if (err)
-          res.status(500).send(err)
+        res.status(500).send(err)
+        return
+      }
+
+      const products = []
+
+      for (const product of wcRes)
+        products.push({ 'id': product.id })
+
+      insertDB('products', products)
+
+      wooCommerce.get('orders', (wcErr, wcData, wcRes) =>
+      {
+        if (wcErr)
+          res.status(500).send(wcErr)
         else
         {
-          const orders = []
-          const ids = []
+          wcRes = JSON.parse(wcRes)
 
-          for (const order of results)
-            ids.push(order.id)
-
-          for (const order of wcRes)
+          pool.query('SELECT * FROM orders', (err, results) =>
           {
-            if (ids.includes(order.id))
-              continue
-
-            const orderObject = {
-              id: order.id,
-              name: `${order.billing.first_name} ${order.billing.last_name}`,
-              address: order.billing.address_1,
-              province: order.billing.state,
-              country: order.billing.country,
-              price: `${order.total}`,
-              quantity: order.line_items.length,
-              status: false,
-              items: ''
-            }
-
-            for (const item of order.line_items)
+            if (err)
+              res.status(500).send(err)
+            else
             {
-              orderObject.items += item.id + ','
+              const orders = []
+              const ids = []
+
+              for (const order of results)
+                ids.push(order.id)
+
+              for (const order of wcRes)
+              {
+                if (ids.includes(order.id))
+                  continue
+
+                const orderObject = {
+                  id: order.id,
+                  name: `${order.billing.first_name} ${order.billing.last_name}`,
+                  address: order.billing.address_1,
+                  province: order.billing.state,
+                  country: order.billing.country,
+                  price: `${order.total}`,
+                  quantity: order.line_items.length,
+                  status: false,
+                  items: ''
+                }
+
+                for (const item of order.line_items)
+                {
+                  console.log(item)
+                  orderObject.items += `${item.product_id}:${item.quantity},`
+                }
+
+                orderObject.items = orderObject.items.slice(0, -1)
+                orders.push(orderObject)
+              }
+
+              if (orders.length == 0)
+              {
+                res.send(results).end()
+                return
+              }
+
+              insertDB('orders', orders)
+              res.send([...results, ...orders]).end()
             }
-
-            orderObject.items = orderObject.items.slice(0, -1)
-            orders.push(orderObject)
-          }
-
-          if (orders.length == 0)
-          {
-            res.send(results).end()
-            return
-          }
-
-          insertDB('orders', orders)
-          res.send([...results, ...orders]).end()
+          })
         }
       })
-    }
+    })
   })
 })
 
@@ -122,10 +127,74 @@ app.get('/orders', (req, res) => // fetcha il db e lo restituisce
 
 app.post('/transfer', (req, res) =>
 {
-  for (const id of req.body)
+  console.log(process.version)
+  let id
+  let errorOccurred = false
+  let finalObj = ''
+
+  const routine = r =>
   {
-    pool.query(`UPDATE orders SET status = 'true' WHERE id = ${id}`)
+    if (r) finalObj += r + ','
+
+    if (req.body.length == 0)
+    {
+      finalObj = JSON.parse('[' + finalObj.slice(0, -1) + ']')
+
+      if (errorOccurred)
+        res.status(500).send(finalObj)
+      else
+        res.send(finalObj).end()
+
+      return
+    }
+
+    id = req.body.pop()
+    const rows = []
+
+    pool.query(`UPDATE orders SET status = 'true' WHERE id = ${id}`, (err, results) =>
+    {
+      if (err)
+      {
+        res.status(500).send(err)
+        return
+      }
+
+      pool.query(`SELECT * FROM orders WHERE id = ${id}`, (err, results) =>
+      {
+        if (err)
+        {
+          res.status(500).send(err)
+          return
+        }
+
+        const order = results[0]
+        const items = order.items.split(',')
+
+        for (const item of items)
+          rows.push(makeRow(...item.split(':')))
+
+        fetch('https://schoollab2022.extraerp.it/erpapi/com/albalog/erp/DO/WAManager.xml/WADocumento/import',
+        {
+          method: 'POST',
+          body: makeDocument(id, rows),
+          headers:
+          {
+            'Accept': 'application/xml',
+            'Content-Type': 'application/xml'
+          }
+        })
+        .catch(() =>
+        {
+          errorOccurred = true
+          routine(JSON.stringify({ id: id, error: true }))
+        })
+        .then(r => r.text())
+        .then(v => routine(JSON.stringify({ id: id, error: false, xml: v })))
+      })
+    })
   }
+
+  routine(null)
 })
 
 function insertDB(tableName, array)
@@ -158,6 +227,35 @@ function insertDB(tableName, array)
 
     query = 'INSERT INTO ' + tableName + '('
   })
+}
+
+function makeDocument(id, rows)
+{
+  return /*xml*/ `
+    <parameters>
+      <data>
+        <IDCollection>
+          <WADocumento
+            IDTipologiaDocumento_Codice="ORDC"
+            NumeroDocumento="${id}"
+            IDAnagraficaRiferimento_Codice="1"
+          >${rows.join()}</WADocumento>
+        </IDCollection>
+      </data>
+    </parameters>
+  `
+}
+
+function makeRow(id, quantity)
+{
+  return /*xml*/ `
+    <WARigaDocumento
+      IDTipoRigaDocumento_Codice="ME"
+      Quantita="${quantity}"
+      QuantitaEvasa="0"
+      IDArticolo_Codice="${id}"
+    />
+  `
 }
 
 app.listen(8080)
