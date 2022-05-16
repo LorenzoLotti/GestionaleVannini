@@ -1,6 +1,3 @@
-DROP DATABASE IF EXISTS gestionale;
-CREATE DATABASE gestionale;
-
 USE gestionale;
 
 CREATE TABLE IF NOT EXISTS orders
