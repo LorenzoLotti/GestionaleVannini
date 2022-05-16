@@ -1,9 +1,18 @@
 /* eslint-disable no-undef */
 let orders = []
 let selectedOrders = []
+const messageModal = new bootstrap.Modal(document.querySelector('#message'))
+const messageBody = document.querySelector('#message .modal-body')
 
 document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
 {
+  if (selectedOrders.length == 0)
+  {
+    messageBody.textContent = 'Nessun ordine selezionato'
+    messageModal.show()
+    return
+  }
+
   fetch('/transfer', {
     method: 'POST',
     headers: {
