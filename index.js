@@ -180,7 +180,8 @@ app.post('/transfer', (req, res) =>
           headers:
           {
             'Accept': 'application/xml',
-            'Content-Type': 'application/xml'
+            'Content-Type': 'application/xml',
+            'Authorization': 'Basic RDBERjA0RTYtQjJCOC00MzVBLUEwMUYtQ0Q2NTM3OTk0NzA4Og=='
           }
         })
         .catch(() =>
