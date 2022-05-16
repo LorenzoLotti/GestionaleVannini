@@ -127,7 +127,6 @@ app.get('/orders', (req, res) => // fetcha il db e lo restituisce
 
 app.post('/transfer', (req, res) =>
 {
-  console.log(process.version)
   let id
   let errorOccurred = false
   let finalObj = ''
@@ -151,7 +150,7 @@ app.post('/transfer', (req, res) =>
     id = req.body.pop()
     const rows = []
 
-    pool.query(`UPDATE orders SET status = 'true' WHERE id = ${id}`, (err, results) =>
+    pool.query(`SELECT * FROM orders WHERE id = ${id}`, (err, results) =>
     {
       if (err)
       {
@@ -159,38 +158,47 @@ app.post('/transfer', (req, res) =>
         return
       }
 
-      pool.query(`SELECT * FROM orders WHERE id = ${id}`, (err, results) =>
+      if (results.length == 0)
       {
-        if (err)
+        res.status(400).send(err)
+        return
+      }
+
+      const order = results[0]
+      const items = order.items.split(',')
+
+      for (const item of items)
+        rows.push(makeRow(...item.split(':')))
+
+      fetch('https://schoollab2022.extraerp.it/erpapi/com/albalog/erp/DO/WAManager.xml/WADocumento/import',
+      {
+        method: 'POST',
+        body: makeDocument(id, rows),
+        headers:
         {
-          res.status(500).send(err)
-          return
+          'Accept': 'application/xml',
+          'Content-Type': 'application/xml',
+          'Authorization': 'Basic RDBERjA0RTYtQjJCOC00MzVBLUEwMUYtQ0Q2NTM3OTk0NzA4Og=='
         }
+      })
+      .catch(() =>
+      {
+        errorOccurred = true
+        routine(JSON.stringify({ id: id, error: true }))
+      })
+      .then(r => r.text())
+      .then(v =>
+      {
+        routine(JSON.stringify({ id: id, error: false, message: v }))
 
-        const order = results[0]
-        const items = order.items.split(',')
-
-        for (const item of items)
-          rows.push(makeRow(...item.split(':')))
-
-        fetch('https://schoollab2022.extraerp.it/erpapi/com/albalog/erp/DO/WAManager.xml/WADocumento/import',
+        pool.query(`UPDATE orders SET status = 'true' WHERE id = ${id}`, (err, results) =>
         {
-          method: 'POST',
-          body: makeDocument(id, rows),
-          headers:
+          if (err)
           {
-            'Accept': 'application/xml',
-            'Content-Type': 'application/xml',
-            'Authorization': 'Basic RDBERjA0RTYtQjJCOC00MzVBLUEwMUYtQ0Q2NTM3OTk0NzA4Og=='
+            res.status(500).send(err)
+            return
           }
         })
-        .catch(() =>
-        {
-          errorOccurred = true
-          routine(JSON.stringify({ id: id, error: true }))
-        })
-        .then(r => r.text())
-        .then(v => routine(JSON.stringify({ id: id, error: false, xml: v })))
       })
     })
   }

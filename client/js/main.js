@@ -4,7 +4,6 @@ let selectedOrders = []
 
 document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
 {
-
   fetch('/transfer', {
     method: 'POST',
     headers: {
@@ -12,7 +11,7 @@ document.querySelector('#transfer').onclick = () => // pulsante 'trasferisci'
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(selectedOrders)
-  })
+  }).then(() => location.reload())
 }
 
 document.querySelector('#update').onclick = updateTableFromDB
@@ -109,5 +108,6 @@ async function updateTableFromDB()
       orders = data
       ordersTable.setData(orders)
       updating = false
+      location.reload()
     })
 }
